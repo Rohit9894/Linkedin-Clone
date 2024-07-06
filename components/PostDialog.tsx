@@ -12,6 +12,7 @@ import { useRef, useState } from "react"
 import { readFileAsDataUrl } from "@/lib/utils"
 import Image from "next/image"
 import { Profile } from "./Shared/Profile"
+import { createPostAction } from "@/lib/serveractions"
 
 
 export function PostDialog({ setOpen, open, src }: { setOpen: any, open: boolean, src: string }) {
@@ -30,7 +31,18 @@ export function PostDialog({ setOpen, open, src }: { setOpen: any, open: boolean
             setSelectedFile(dataUrl);
         }
     }
- 
+
+    const postActionHandler = async (formData: FormData) => {
+        const inputText = formData.get("inputText") as string;
+
+        try {
+            await createPostAction(inputText, selectedFile);
+        } catch (error) {
+            console.log('error occured', error)
+        }
+        setInputText(""),
+            setOpen(false),
+    }
 
     return (
         <Dialog open={open}>
@@ -44,7 +56,7 @@ export function PostDialog({ setOpen, open, src }: { setOpen: any, open: boolean
                         </div>
                     </DialogTitle>
                 </DialogHeader>
-                <form >
+                <form action={postActionHandler}>
                     <div className="flex flex-col">
                         <Textarea
                             id="name"
