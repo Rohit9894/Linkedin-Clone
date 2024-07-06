@@ -4,6 +4,8 @@ import { v2 as cloudinary } from "cloudinary"
 import connectDB from "./db"
 import { IUser } from "@/models/user.model";
 import { Post } from "@/models/post.model";
+import { json } from "stream/consumers";
+import { revalidatePath } from "next/cache";
 
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
@@ -40,10 +42,21 @@ export const createPostAction = async (inputText: string, selectedFile: string) 
                 user: userDatabase
             })
         }
+        revalidatePath('/')
     } catch (error: any) {
         console.log(error.message)
         throw new Error(error);
     }
 
 
+}
+
+export const getAllPosts = async () => {
+    await connectDB();
+    try {
+        const posts = await Post.find().sort({ createdAt: -1 });
+        return JSON.parse(JSON.stringify(posts));
+    } catch (error) {
+        console.log(error)
+    }
 }

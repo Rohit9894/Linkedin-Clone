@@ -40,8 +40,8 @@ export function PostDialog({ setOpen, open, src }: { setOpen: any, open: boolean
         } catch (error) {
             console.log('error occured', error)
         }
-        setInputText(""),
-            setOpen(false),
+        setInputText("");
+        setOpen(false);
     }
 
     return (
