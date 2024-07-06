@@ -7,9 +7,14 @@ import { Trash2 } from 'lucide-react'
 import { Badge } from './ui/badge'
 import { IPostDocument } from '@/models/post.model'
 import PostContent from './PostContent'
+import { deletePostAction } from '@/lib/serveractions'
+import SocialOptions from './SocialOptions'
 
 const Post = ({ post }: { post: IPostDocument }) => {
+    const { user } = useUser();
     const fullName = post?.user?.firstName + " " + post?.user.lastName;
+    const loggedInUser = user?.id === post?.user?.userId;
+
     return (
         <div className='bg-white my-2 rounded-lg border border-gray-300' >
             <div className="flex gap-2 p-4">
@@ -22,14 +27,18 @@ const Post = ({ post }: { post: IPostDocument }) => {
                     </div>
                 </div>
                 <div>
-                    <Button variant={'outline'} size={'icon'} className='rounded-full'>
-                        <Trash2 />
-                    </Button>
+                    {
+                        loggedInUser && <Button onClick={() => { const res = deletePostAction(post._id) }} variant={'outline'} size={'icon'} className='rounded-full'>
+                            <Trash2 />
+                        </Button>
+                    }
+
                 </div>
             </div>
             {/* Post Content */}
-            <PostContent post={post}/>
+            <PostContent post={post} />
             {/* Social Option */}
+            <SocialOptions />
         </div>
     )
 }
