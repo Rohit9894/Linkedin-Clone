@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+
+import React, { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import { MessageCircleIcon, Repeat, Send, ThumbsUp } from 'lucide-react'
 import { IPostDocument } from '@/models/post.model'
@@ -6,10 +7,14 @@ import { useUser } from '@clerk/nextjs'
 
 const SocialOptions = ({ post }: { post: IPostDocument }) => {
     const { user } = useUser();
+    const totalLikes = post?.likes;
+    const isLiked = totalLikes?.includes(user?.id!)
 
-    const [liked, setLiked] = useState(false);
+
+
+    const [liked, setLiked] = useState(isLiked);
     const [likes, setLikes] = useState(post.likes);
-    const [commentOpen, setCommentOpen] = useState(false);
+    const [commentOpen, setCommentOpen] = useState(totalLikes);
     const likeOrDislikeHandler = async () => {
         if (!user) throw new Error("user not authticated");
         const tempLiked = liked;
@@ -43,17 +48,23 @@ const SocialOptions = ({ post }: { post: IPostDocument }) => {
 
 
     }
+    useEffect(() => {
+        setLiked(true)
+    }, [totalLikes]);
     return (
         <div>
+
+            <div className='text-sm mx-2 p-2 flex items-center justify-between border-b-gray-300'>
+                {
+                    likes && likes.length > 0 && (<p className='text-xs text-gray-500 hover:text-blue-500'>{likes.length} likes</p>)
+                }
+            </div>
             <div className="flex items-center m-1 justify-between">
-                <div>
-                    {
-                        likes && likes.length > 0 && (<p className='text-xs text-gray-500 hover:text-blue-500'>{likes.length}</p>)
-                    }
-                </div>
                 <Button onClick={likeOrDislikeHandler} variant={"ghost"} className='flex items-center gap-1 rounded-lg text-gray-600 hover:text-black'>
 
-                    <ThumbsUp />
+                    <ThumbsUp
+                        className={`${liked && user && 'fill-[#378FE9]'}`}
+                    />
                     <p>Like</p>
                 </Button>
                 <Button variant={"ghost"} className='flex items-center gap-1 rounded-lg text-gray-600 hover:text-black'>
@@ -74,6 +85,8 @@ const SocialOptions = ({ post }: { post: IPostDocument }) => {
             </div>
 
         </div>
+
+
     )
 }
 
