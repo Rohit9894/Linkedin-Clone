@@ -4,17 +4,18 @@ import { Button } from './ui/button'
 import { MessageCircleIcon, Repeat, Send, ThumbsUp } from 'lucide-react'
 import { IPostDocument } from '@/models/post.model'
 import { useUser } from '@clerk/nextjs'
+import CommentInput from './CommentInput'
+import Comments from './Comments'
 
 const SocialOptions = ({ post }: { post: IPostDocument }) => {
     const { user } = useUser();
     const totalLikes = post?.likes;
-    const isLiked = totalLikes?.includes(user?.id!)
 
 
 
-    const [liked, setLiked] = useState(isLiked);
+    const [liked, setLiked] = useState(false);
     const [likes, setLikes] = useState(post.likes);
-    const [commentOpen, setCommentOpen] = useState(totalLikes);
+    const [commentOpen, setCommentOpen] = useState(false);
     const likeOrDislikeHandler = async () => {
         if (!user) throw new Error("user not authticated");
         const tempLiked = liked;
@@ -48,15 +49,30 @@ const SocialOptions = ({ post }: { post: IPostDocument }) => {
 
 
     }
+
     useEffect(() => {
-        setLiked(true)
-    }, [totalLikes]);
+       
+        const checkIfLiked = () => {
+          if (totalLikes && user && user.id) {
+            return totalLikes.includes(user.id);
+          }
+          return false;
+        };
+    
+       
+        const isLiked = checkIfLiked();
+        setLiked(isLiked);
+      }, [totalLikes, user]); 
+
     return (
         <div>
 
             <div className='text-sm mx-2 p-2 flex items-center justify-between border-b-gray-300'>
                 {
                     likes && likes.length > 0 && (<p className='text-xs text-gray-500 hover:text-blue-500'>{likes.length} likes</p>)
+                }
+                {
+                    (post.comments && post.comments.length > 0) && (<p onClick={() => setCommentOpen(!commentOpen)} className='text-xm text-gray-500 hover:text-blue-500 hover:underline hover:cursor-pointer'>{post.comments.length} message</p>)
                 }
             </div>
             <div className="flex items-center m-1 justify-between">
@@ -67,9 +83,9 @@ const SocialOptions = ({ post }: { post: IPostDocument }) => {
                     />
                     <p>Like</p>
                 </Button>
-                <Button variant={"ghost"} className='flex items-center gap-1 rounded-lg text-gray-600 hover:text-black'>
+                <Button onClick={()=>setCommentOpen(!commentOpen)} variant={"ghost"} className='flex items-center gap-1 rounded-lg text-gray-600 hover:text-black'>
 
-                    <MessageCircleIcon />
+                    <MessageCircleIcon  className={`${commentOpen && 'fill-[#378FE9]'}`} />
                     <p>Message</p>
                 </Button>
                 <Button variant={"ghost"} className='flex items-center gap-1 rounded-lg text-gray-600 hover:text-black'>
@@ -83,6 +99,15 @@ const SocialOptions = ({ post }: { post: IPostDocument }) => {
 
                 </Button>
             </div>
+            {
+                commentOpen && (
+                    <div className="p-4">
+                        <CommentInput postId={post._id} />
+                        <Comments post={post} />
+
+                    </div>
+                )
+            }
 
         </div>
 

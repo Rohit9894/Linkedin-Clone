@@ -11,7 +11,7 @@ const PostInput = ({ user }: { user: any }) => {
         setOpen(true)
     }
     return (
-        <div className='bg-white p-4 m-2 md:m-0 border border-gray-300 rounded-lg'>
+        <div className='bg-white p-4 m-2 md:m-0 border border-gray-300 rounded-[10px]'>
             <div className="flex items-center gap-3">
                 <Profile src={user?.imageUrl} />
                 <Input onClick={()=>setOpen(true)} type="text" placeholder='Start a post'

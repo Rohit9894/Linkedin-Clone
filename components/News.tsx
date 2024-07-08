@@ -26,7 +26,7 @@ const News = () => {
   ]
   return (
 
-    <div className='hidden md:block w-[25%] bg-white rounded-lg border border-gray-300 h-fit'>
+    <div className='hidden md:block w-[25%] bg-white  border border-gray-300 h-fit rounded-[10px]'>
       <div className="flex items-center justify-between p-3">
         <h1 className='font-medium'>LinkedIn News</h1>
         <Info size={18}/>

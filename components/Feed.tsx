@@ -8,7 +8,7 @@ const Feed = async ({ user }: { user: any }) => {
   const posts = await getAllPosts();
  
   return (
-    <div className='flex-1'>
+    <div className='flex-1 ' >
       <PostInput user={userData} />
       <Posts posts={posts}/>
     </div>

@@ -9,6 +9,8 @@ import { IPostDocument } from '@/models/post.model'
 import PostContent from './PostContent'
 import { deletePostAction } from '@/lib/serveractions'
 import SocialOptions from './SocialOptions'
+import ReactTimeago from "react-timeago"
+
 
 const Post = ({ post }: { post: IPostDocument }) => {
     const { user } = useUser();
@@ -16,14 +18,17 @@ const Post = ({ post }: { post: IPostDocument }) => {
     const loggedInUser = user?.id === post?.user?.userId;
 
     return (
-        <div className='bg-white my-2 rounded-lg border border-gray-300' >
+        <div className='bg-white my-2  border border-gray-300  rounded-[10px]' >
             <div className="flex gap-2 p-4">
                 <Profile src={post?.user?.profilePhoto!} />
                 <div className="flex items-center justify-between w-full">
                     <div>
                         <h1 className='text-sm font-bold'>{fullName}<Badge variant={'secondary'} className='ml-2'>You</Badge></h1>
-                        <p className='text-xs text-gray-500'>@username</p>
-                        <p className='text-xs text-gray-500'>1hr ago</p>
+                        <p className='text-xs text-gray-500'>@{user ? user?.username : "username"}</p>
+
+                        <p className='text-xs text-gray-500'>
+                            <ReactTimeago date={new Date(post.createdAt)} />
+                        </p>
                     </div>
                 </div>
                 <div>
@@ -38,7 +43,7 @@ const Post = ({ post }: { post: IPostDocument }) => {
             {/* Post Content */}
             <PostContent post={post} />
             {/* Social Option */}
-            <SocialOptions post={post}/>
+            <SocialOptions post={post} />
         </div>
     )
 }

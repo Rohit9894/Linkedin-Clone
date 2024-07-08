@@ -6,6 +6,7 @@ import { IUser } from "@/models/user.model";
 import { Post } from "@/models/post.model";
 import { json } from "stream/consumers";
 import { revalidatePath } from "next/cache";
+import { Comment } from "@/models/comment.model";
 
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
@@ -67,7 +68,7 @@ export const deletePostAction = async (postId: string) => {
     if (!user) throw new Error("User not authticated")
     const post = await Post.findById(postId);
     if (!post) throw new Error("Post not found")
-    if (post.user.userId == !user.id) {
+    if (post.user.userId === !user.id) {
         throw new Error("You are not an owner of this post");
 
     }
@@ -79,4 +80,37 @@ export const deletePostAction = async (postId: string) => {
 
     }
 
+}
+
+export const createCommentAction = async (postId: string, formData: FormData) => {
+
+    try {
+        const user = await currentUser();
+        if (!user) throw new Error("User not authenticated");
+        const inputText = formData.get('inputText') as string;
+        if (!inputText) throw new Error("Field is required");
+        if (!postId) throw new Error("Post id required");
+
+        const userDatabase: IUser = {
+            firstName: user.firstName || "Unknown",
+            lastName: user.lastName || "Mern Stack",
+            userId: user.id,
+            profilePhoto: user.imageUrl
+        }
+        const post = await Post.findById({ _id: postId });
+        if (!post) throw new Error('Post not found');
+
+        const comment = await Comment.create({
+            textMessage: inputText,
+            user: userDatabase,
+        });
+        console.log(comment)
+
+        post.comments?.push(comment._id);
+        await post.save();
+
+        revalidatePath("/");
+    } catch (error) {
+        throw new Error('An error occurred')
+    }
 }

@@ -22,8 +22,8 @@ export default function RootLayout({
 
         <body className={`${inter.className} min-h-screen flex flex-col`}>
           <Navbar />
-          <div className="flex-1 w-full">
-            <main className="max-w-6xl mx-auto mt-[56px]">
+          <div className="flex-1 w-full md:bg-[#F4F2EE]">
+            <main className="max-w-6xl mx-auto mt-[80px]">
               {children}
             </main>
           </div>
