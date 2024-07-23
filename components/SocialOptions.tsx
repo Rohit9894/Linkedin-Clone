@@ -17,7 +17,10 @@ const SocialOptions = ({ post }: { post: IPostDocument }) => {
     const [likes, setLikes] = useState(post.likes);
     const [commentOpen, setCommentOpen] = useState(false);
     const likeOrDislikeHandler = async () => {
-        if (!user) throw new Error("user not authticated");
+        if (!user) {
+            alert("Please Login");
+            return;
+        }
         const tempLiked = liked;
         const tempLikes = likes;
         const dislike = likes?.filter((userId) => userId !== user.id);
@@ -50,19 +53,27 @@ const SocialOptions = ({ post }: { post: IPostDocument }) => {
 
     }
 
+    function isOpen() {
+        if (!user) {
+            alert("Please Login");
+            return;
+        }
+        setCommentOpen(!commentOpen)
+    }
+
     useEffect(() => {
-       
+
         const checkIfLiked = () => {
-          if (totalLikes && user && user.id) {
-            return totalLikes.includes(user.id);
-          }
-          return false;
+            if (totalLikes && user && user.id) {
+                return totalLikes.includes(user.id);
+            }
+            return false;
         };
-    
-       
+
+
         const isLiked = checkIfLiked();
         setLiked(isLiked);
-      }, [totalLikes, user]); 
+    }, [totalLikes, user]);
 
     return (
         <div>
@@ -83,9 +94,9 @@ const SocialOptions = ({ post }: { post: IPostDocument }) => {
                     />
                     <p>Like</p>
                 </Button>
-                <Button onClick={()=>setCommentOpen(!commentOpen)} variant={"ghost"} className='flex items-center gap-1 rounded-lg text-gray-600 hover:text-black'>
+                <Button onClick={() => isOpen()} variant={"ghost"} className='flex items-center gap-1 rounded-lg text-gray-600 hover:text-black'>
 
-                    <MessageCircleIcon  className={`${commentOpen && 'fill-[#378FE9]'}`} />
+                    <MessageCircleIcon className={`${commentOpen && 'fill-[#378FE9]'}`} />
                     <p>Message</p>
                 </Button>
                 <Button variant={"ghost"} className='flex items-center gap-1 rounded-lg text-gray-600 hover:text-black'>

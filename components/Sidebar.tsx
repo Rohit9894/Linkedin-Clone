@@ -24,7 +24,7 @@ const Sidebar = async ({ user }: { user: any }) => {
                     }
                 </div>
                 <div className='my-1 absolute top-10 left-[40%]'>
-                    <Profile src={user ? user?.imageUrl! : "/banner.jpg"} />
+                    <Profile src={user ? user?.imageUrl! : "/banner.avif"} />
                 </div>
                 <div className='border-b border-b-gray-300'>
                     <div className='p-2 mt-5 text-center'>

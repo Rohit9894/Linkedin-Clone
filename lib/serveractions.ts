@@ -6,7 +6,7 @@ import { IUser } from "@/models/user.model";
 import { Post } from "@/models/post.model";
 import { json } from "stream/consumers";
 import { revalidatePath } from "next/cache";
-import { Comment } from "@/models/comment.model";
+import { Comment, IComment } from "@/models/comment.model";
 
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
@@ -68,7 +68,8 @@ export const deletePostAction = async (postId: string) => {
     if (!user) throw new Error("User not authticated")
     const post = await Post.findById(postId);
     if (!post) throw new Error("Post not found")
-    if (post.user.userId === !user.id) {
+    if (post.user.userId !== user.id) {
+
         throw new Error("You are not an owner of this post");
 
     }
@@ -100,13 +101,13 @@ export const createCommentAction = async (postId: string, formData: FormData) =>
         const post = await Post.findById({ _id: postId });
         if (!post) throw new Error('Post not found');
 
-        const comment = await Comment.create({
+        const comment   = await Comment.create({
             textMessage: inputText,
             user: userDatabase,
         });
-        console.log(comment)
-
-        post.comments?.push(comment._id);
+        
+        const id = comment._id as { _id: string };     
+        post.comments?.push(id);
         await post.save();
 
         revalidatePath("/");

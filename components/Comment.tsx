@@ -1,7 +1,7 @@
 import { ICommentDocument } from '@/models/comment.model'
 import React from 'react'
 import { Profile } from './Shared/Profile'
-import ReactTimeago from "react-timeago"
+import ReactTimeago from 'react-timeago';
 
 function Comment({ comment }: { comment: ICommentDocument }) {
     return (
